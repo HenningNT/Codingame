@@ -219,7 +219,15 @@ public class GameData
             else if (me.CurrentLocation == "SAMPLES")
             {
                 var loaded = mySamples.Count();
-                if (me.Expertise.Sum() == 0 && loaded  < 3)
+                if (me.Expertise.Sum() > 12  && loaded  < 3)
+                {
+                    Console.Error.WriteLine("End of game soooon!");
+                    if (me.Expertise.Sum() > 12  && loaded  == 2)
+                    Console.WriteLine("CONNECT 3" );    
+                    else
+                    Console.WriteLine("CONNECT 2" );    
+                }
+                else if (me.Expertise.Sum() == 0 && loaded  < 3)
                 {
                     Console.WriteLine("CONNECT 1" );    
                 }
@@ -233,11 +241,11 @@ public class GameData
                     foreach (var sample in mySamples)
                     {
                         if (sample.Rank == 1)
-                        capacity = capacity -4;
+                        capacity = capacity -3;
                         if (sample.Rank == 2)
-                        capacity = capacity -7;
+                        capacity = capacity -6;
                         if (sample.Rank == 3)
-                        capacity = capacity -11;
+                        capacity = capacity -10;
                     }
 
 
@@ -255,7 +263,7 @@ public class GameData
                         {
                             Console.WriteLine("CONNECT 1" );    
                         }
-                        else if (capacity < 16)
+                        else if (capacity < 15)
                         {
                             Console.WriteLine("CONNECT 2" );    
                         }
@@ -298,7 +306,7 @@ public class GameData
                 {
                     Console.WriteLine("GOTO SAMPLES ");
                 }
-                else if (mySamples.Any(s => s.IsCostCovered(me.Storage, me.Expertise) && s.Health >= 20 ))
+                else if (mySamples.Count(s => s.IsCostCovered(me.Storage, me.Expertise)) >=2 )
                 {
                     // Can any of our samples be covered now?
                     Console.WriteLine("GOTO LABORATORY");
@@ -427,9 +435,9 @@ public class GameData
                 else
                 {
 
-                    // if (mySamples.Any(s=> s.CanCostBeCovered(me)))
-                    //     Console.WriteLine("GOTO MOLECULES");
-                    //else 
+                    if (mySamples.Any(s=> s.CanCostBeCovered(me, opponent)))
+                        Console.WriteLine("GOTO MOLECULES");
+                    else 
                     if (gameData.samples.Any(s => s.CarriedBy == -1 && s.CanCostBeCovered(me, opponent) && mySamples.Count() == 2 ))
                         Console.WriteLine("GOTO DIAGNOSIS");
                     else
@@ -500,11 +508,11 @@ public class GameData
             else
             {
             return (
-                Cost[A] <= me.Storage[0]+5 -opponent.Storage[0] + 5 + me.Expertise[A] &&
-                Cost[B] <= me.Storage[1]+5 -opponent.Storage[1] + 5 + me.Expertise[B] &&
-                Cost[C] <= me.Storage[2]+5 -opponent.Storage[2] + 5 + me.Expertise[C] &&
-                Cost[D] <= me.Storage[3]+5 -opponent.Storage[3] + 5 + me.Expertise[D] &&
-                Cost[E] <= me.Storage[4]+5 -opponent.Storage[4] + 5 + me.Expertise[E] 
+                Cost[A] <= me.Storage[0]+5 -opponent.Storage[0] + 1 + me.Expertise[A] &&
+                Cost[B] <= me.Storage[1]+5 -opponent.Storage[1] + 1 + me.Expertise[B] &&
+                Cost[C] <= me.Storage[2]+5 -opponent.Storage[2] + 1 + me.Expertise[C] &&
+                Cost[D] <= me.Storage[3]+5 -opponent.Storage[3] + 1 + me.Expertise[D] &&
+                Cost[E] <= me.Storage[4]+5 -opponent.Storage[4] + 1 + me.Expertise[E] 
                 );
             }
         }
