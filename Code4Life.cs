@@ -1,3 +1,4 @@
+// Sixth place in Code4Life Silver League
 
 using System;
 using System.Linq;
@@ -296,6 +297,11 @@ public class GameData
                 else if (!mySamples.Any())
                 {
                     Console.WriteLine("GOTO SAMPLES ");
+                }
+                else if (mySamples.Any(s => s.IsCostCovered(me.Storage, me.Expertise) ))
+                {
+                    // Can any of our samples be covered now?
+                    Console.WriteLine("GOTO LABORATORY");
                 }
                 else
                 {
