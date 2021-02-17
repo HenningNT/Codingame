@@ -1,4 +1,3 @@
-// Fixed Sixth place in Code4Life Silver League
 
 using System;
 using System.Linq;
@@ -219,11 +218,11 @@ public class GameData
             else if (me.CurrentLocation == "SAMPLES")
             {
                 var loaded = mySamples.Count();
-                if (me.Expertise.Sum() == 0 && loaded  < 2)
+                if (me.Expertise.Sum() == 0 && loaded  < 3)
                 {
                     Console.WriteLine("CONNECT 1" );    
                 }
-                else if (me.Expertise.Sum() == 0 && loaded == 2)
+                else if (me.Expertise.Sum() == 0 && loaded == 3)
                 {
                     Console.WriteLine("GOTO DIAGNOSIS");
                 }
@@ -255,7 +254,7 @@ public class GameData
                         {
                             Console.WriteLine("CONNECT 1" );    
                         }
-                        else if (capacity < 15)
+                        else if (capacity < 16)
                         {
                             Console.WriteLine("CONNECT 2" );    
                         }
