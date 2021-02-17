@@ -298,7 +298,7 @@ public class GameData
                 {
                     Console.WriteLine("GOTO SAMPLES ");
                 }
-                else if (mySamples.Any(s => s.IsCostCovered(me.Storage, me.Expertise) ))
+                else if (mySamples.Any(s => s.IsCostCovered(me.Storage, me.Expertise) && s.Health >= 20 ))
                 {
                     // Can any of our samples be covered now?
                     Console.WriteLine("GOTO LABORATORY");
