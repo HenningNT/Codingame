@@ -1,4 +1,4 @@
-// Sixth place in Code4Life Silver League
+// 162 nd place in Code4Life Silver League
 
 using System;
 using System.Linq;
@@ -227,11 +227,11 @@ public class GameData
                     else
                     Console.WriteLine("CONNECT 2" );    
                 }
-                else if (me.Expertise.Sum() == 0 && loaded  < 3)
+                else if (me.Expertise.Sum() == 0 && loaded  < 2)
                 {
                     Console.WriteLine("CONNECT 1" );    
                 }
-                else if (me.Expertise.Sum() == 0 && loaded == 3)
+                else if (me.Expertise.Sum() == 0 && loaded == 2)
                 {
                     Console.WriteLine("GOTO DIAGNOSIS");
                 }
@@ -241,11 +241,11 @@ public class GameData
                     foreach (var sample in mySamples)
                     {
                         if (sample.Rank == 1)
-                        capacity = capacity -3;
+                            capacity = capacity -3;
                         if (sample.Rank == 2)
-                        capacity = capacity -6;
+                            capacity = capacity -6;
                         if (sample.Rank == 3)
-                        capacity = capacity -10;
+                            capacity = capacity -11;
                     }
 
 
@@ -263,7 +263,7 @@ public class GameData
                         {
                             Console.WriteLine("CONNECT 1" );    
                         }
-                        else if (capacity < 15)
+                        else if (capacity < 16)
                         {
                             Console.WriteLine("CONNECT 2" );    
                         }
@@ -321,40 +321,39 @@ public class GameData
                 if (me.Storage.Sum() < 10 && projects.Any(p => p.CanBeCompleted(me)))
                 {
 
-            Console.Error.WriteLine($"Project costs: ");
+                    Console.Error.WriteLine($"Project costs: ");
 
-            Console.Error.WriteLine($"{projects[0].CostA}  {me.Expertise[A]}");
-            Console.Error.WriteLine($"{projects[0].CostB}  {me.Expertise[B]}");
-            Console.Error.WriteLine($"{projects[0].CostC}  {me.Expertise[C]}");
-            Console.Error.WriteLine($"{projects[0].CostD}  {me.Expertise[D]}");
-            Console.Error.WriteLine($"{projects[0].CostE}  {me.Expertise[E]}");
+                    Console.Error.WriteLine($"{projects[0].CostA}  {me.Expertise[A]}");
+                    Console.Error.WriteLine($"{projects[0].CostB}  {me.Expertise[B]}");
+                    Console.Error.WriteLine($"{projects[0].CostC}  {me.Expertise[C]}");
+                    Console.Error.WriteLine($"{projects[0].CostD}  {me.Expertise[D]}");
+                    Console.Error.WriteLine($"{projects[0].CostE}  {me.Expertise[E]}");
 
-            Console.Error.WriteLine($"{projects[1].CostA}  {me.Expertise[A]}");
-            Console.Error.WriteLine($"{projects[1].CostB}  {me.Expertise[B]}");
-            Console.Error.WriteLine($"{projects[1].CostC}  {me.Expertise[C]}");
-            Console.Error.WriteLine($"{projects[1].CostD}  {me.Expertise[D]}");
-            Console.Error.WriteLine($"{projects[1].CostE}  {me.Expertise[E]}");
+                    Console.Error.WriteLine($"{projects[1].CostA}  {me.Expertise[A]}");
+                    Console.Error.WriteLine($"{projects[1].CostB}  {me.Expertise[B]}");
+                    Console.Error.WriteLine($"{projects[1].CostC}  {me.Expertise[C]}");
+                    Console.Error.WriteLine($"{projects[1].CostD}  {me.Expertise[D]}");
+                    Console.Error.WriteLine($"{projects[1].CostE}  {me.Expertise[E]}");
 
-            Console.Error.WriteLine($"{projects[2].CostA}  {me.Expertise[A]}");
-            Console.Error.WriteLine($"{projects[2].CostB}  {me.Expertise[B]}");
-            Console.Error.WriteLine($"{projects[2].CostC}  {me.Expertise[C]}");
-            Console.Error.WriteLine($"{projects[2].CostD}  {me.Expertise[D]}");
-            Console.Error.WriteLine($"{projects[2].CostE}  {me.Expertise[E]}");
-
-
-
+                    Console.Error.WriteLine($"{projects[2].CostA}  {me.Expertise[A]}");
+                    Console.Error.WriteLine($"{projects[2].CostB}  {me.Expertise[B]}");
+                    Console.Error.WriteLine($"{projects[2].CostC}  {me.Expertise[C]}");
+                    Console.Error.WriteLine($"{projects[2].CostD}  {me.Expertise[D]}");
+                    Console.Error.WriteLine($"{projects[2].CostE}  {me.Expertise[E]}");
                 }
-
-                 if ( me.Storage.Sum() < 10 && mySamples.Any(s => s.CanCostBeCovered(me, opponent))  )
+                if (mySamples.Count( s => s.IsCostCovered(me.Storage, me.Expertise)) >= 1 &&  me.Expertise.Sum() >= 14)
+                {
+                    // Close to end of game
+                    Console.WriteLine("GOTO LABORATORY");
+                } else 
+                if ( me.Storage.Sum() < 10 && mySamples.Any(s => s.CanCostBeCovered(me, opponent)) )
                 {
                     string output = "GOTO SAMPLES";
                     Console.Error.WriteLine("Getting some molecules!");
 
-                    var loaded = mySamples.OrderBy(s => s.TrueCost(me));
-
                     var storage = me.Storage.ToArray();
                     var expertise = me.Expertise.ToArray();
-                    foreach (var sample in mySamples)
+                    foreach (var sample in mySamples.OrderByDescending(s => s.Value(me)))
                     {
                         if (sample.IsCostCovered(storage, expertise))
                         {
@@ -434,11 +433,11 @@ public class GameData
                 }
                 else
                 {
-
-                    if (mySamples.Any(s=> s.CanCostBeCovered(me, opponent)))
+                    if (mySamples.Any(s=> s.CanCostBeCovered(me, opponent) && s.Health > 20) )
                         Console.WriteLine("GOTO MOLECULES");
-                    else 
-                    if (gameData.samples.Any(s => s.CarriedBy == -1 && s.CanCostBeCovered(me, opponent) && mySamples.Count() == 2 ))
+                    //else if (mySamples.Count() == 1 &&  me.Expertise.Sum() >= 12)
+                    //    Console.WriteLine("GOTO MOLECULES");
+                    else if (gameData.samples.Any(s => s.CarriedBy == -1 && s.CanCostBeCovered(me, opponent) && mySamples.Count() == 2 ))
                         Console.WriteLine("GOTO DIAGNOSIS");
                     else
                         Console.WriteLine("GOTO SAMPLES");
@@ -464,6 +463,26 @@ public class GameData
         public string ExpGain;
         public int [] Cost = new int [5];
 
+        public double Value(Bot bot)
+        {
+            int costA = Math.Max( Cost[0] - bot.Expertise[A] - bot.Storage[A], 0);
+            int costB = Math.Max( Cost[1] - bot.Expertise[B] - bot.Storage[B], 0);
+            int costC = Math.Max( Cost[2] - bot.Expertise[C] - bot.Storage[C], 0);
+            int costD = Math.Max( Cost[3] - bot.Expertise[D] - bot.Storage[D], 0);
+            int costE = Math.Max( Cost[4] - bot.Expertise[E] - bot.Storage[E], 0);
+
+            double cost = costA + costB + costC + costD + costE;
+
+            if(cost == 0)
+            {
+                return Health+1.0;
+            }
+            else
+            {
+                return Health / cost;
+            }
+        }
+
         public int TrueCost(Bot bot)
         {
             int costA = Math.Max( Cost[0] - bot.Expertise[A], 0);
@@ -472,7 +491,7 @@ public class GameData
             int costD = Math.Max( Cost[3] - bot.Expertise[D], 0);
             int costE = Math.Max( Cost[4] - bot.Expertise[E], 0);
 
-            int cost =costA + costB + costC + costD + costE;
+            int cost = costA + costB + costC + costD + costE;
 
             Console.Error.WriteLine($"{SampleId} true cost: {cost}");
             return cost;
@@ -508,11 +527,11 @@ public class GameData
             else
             {
             return (
-                Cost[A] <= me.Storage[0]+5 -opponent.Storage[0] + 1 + me.Expertise[A] &&
-                Cost[B] <= me.Storage[1]+5 -opponent.Storage[1] + 1 + me.Expertise[B] &&
-                Cost[C] <= me.Storage[2]+5 -opponent.Storage[2] + 1 + me.Expertise[C] &&
-                Cost[D] <= me.Storage[3]+5 -opponent.Storage[3] + 1 + me.Expertise[D] &&
-                Cost[E] <= me.Storage[4]+5 -opponent.Storage[4] + 1 + me.Expertise[E] 
+                Cost[A] <= 5 + me.Storage[A] + me.Expertise[A] - opponent.Storage[A] &&
+                Cost[B] <= 5 + me.Storage[B] + me.Expertise[B] - opponent.Storage[B] &&
+                Cost[C] <= 5 + me.Storage[C] + me.Expertise[C] - opponent.Storage[C] &&
+                Cost[D] <= 5 + me.Storage[D] + me.Expertise[D] - opponent.Storage[D] &&
+                Cost[E] <= 5 + me.Storage[E] + me.Expertise[E] - opponent.Storage[E] 
                 );
             }
         }
