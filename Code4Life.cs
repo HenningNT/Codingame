@@ -1,4 +1,4 @@
-// 162 nd place in Code4Life Silver League
+// 148th place in Code4Life Silver League
 
 using System;
 using System.Linq;
@@ -219,7 +219,7 @@ public class GameData
             else if (me.CurrentLocation == "SAMPLES")
             {
                 var loaded = mySamples.Count();
-                if (me.Expertise.Sum() > 12  && loaded  < 3)
+                if (me.Expertise.Sum() > 13  && loaded  < 3)
                 {
                     Console.Error.WriteLine("End of game soooon!");
                     if (me.Expertise.Sum() > 12  && loaded  == 2)
@@ -263,7 +263,7 @@ public class GameData
                         {
                             Console.WriteLine("CONNECT 1" );    
                         }
-                        else if (capacity < 16)
+                        else if (capacity < 15)
                         {
                             Console.WriteLine("CONNECT 2" );    
                         }
@@ -430,6 +430,10 @@ public class GameData
                 {
                     var sample = mySamples.Where(s => s.IsCostCovered(me.Storage, me.Expertise)).OrderByDescending(s => s.Health).First();
                     Console.WriteLine("CONNECT " + sample.SampleId);    
+                }
+                else  if(mySamples.Any(s=> s.CanCostBeCovered(me, opponent) && me.Expertise.Sum() <5 ) )
+                { 
+                    Console.WriteLine("GOTO MOLECULES");
                 }
                 else
                 {
