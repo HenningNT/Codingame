@@ -1,4 +1,4 @@
-// Reverting to original code, it was better... 62nd place silver leage
+// 2nd place silver league
 
 using System;
 using System.Linq;
@@ -229,44 +229,18 @@ public class GameData
                 }
                 else if (me.Expertise.Sum() != 0 && loaded < 3)
                 {
-                    int capacity = me.Expertise.Sum() + 10 - me.Storage.Sum();
-                    foreach (var sample in mySamples)
+                    if (me.Expertise.Sum() < 5)
                     {
-                        if (sample.Rank == 1)
-                        capacity = capacity -4;
-                        if (sample.Rank == 2)
-                        capacity = capacity -7;
-                        if (sample.Rank == 3)
-                        capacity = capacity -11;
-                    }
-
-
-                    Console.Error.WriteLine($"capacity: {capacity}");
-
-
-                    // if (me.Expertise.Sum() > 8)
-                    // {
-                    //     Console.WriteLine("CONNECT 3" );    
-                    // }
-                    //else 
-                    if (me.Expertise.Sum() > 4)
-                    {
-                        if (capacity < 5)
-                        {
-                            Console.WriteLine("CONNECT 1" );    
-                        }
-                        else if (capacity < 15)
-                        {
-                            Console.WriteLine("CONNECT 2" );    
-                        }
-                        else 
-                        {
-                            Console.WriteLine("CONNECT 3" );    
-                        }
-
-                    }
-                    else
                         Console.WriteLine("CONNECT 1" );    
+                    }
+                    else if (me.Expertise.Sum() < 12)
+                    {
+                        Console.WriteLine("CONNECT 2" );    
+                    }
+                    else 
+                    {
+                        Console.WriteLine("CONNECT 3" );    
+                    }
                 }
                 else
                 {
@@ -307,29 +281,25 @@ public class GameData
             {
                 if (me.Storage.Sum() < 10 && projects.Any(p => p.CanBeCompleted(me)))
                 {
+                    Console.Error.WriteLine($"Project costs: ");
 
-            Console.Error.WriteLine($"Project costs: ");
+                    Console.Error.WriteLine($"{projects[0].CostA}  {me.Expertise[A]}");
+                    Console.Error.WriteLine($"{projects[0].CostB}  {me.Expertise[B]}");
+                    Console.Error.WriteLine($"{projects[0].CostC}  {me.Expertise[C]}");
+                    Console.Error.WriteLine($"{projects[0].CostD}  {me.Expertise[D]}");
+                    Console.Error.WriteLine($"{projects[0].CostE}  {me.Expertise[E]}");
 
-            Console.Error.WriteLine($"{projects[0].CostA}  {me.Expertise[A]}");
-            Console.Error.WriteLine($"{projects[0].CostB}  {me.Expertise[B]}");
-            Console.Error.WriteLine($"{projects[0].CostC}  {me.Expertise[C]}");
-            Console.Error.WriteLine($"{projects[0].CostD}  {me.Expertise[D]}");
-            Console.Error.WriteLine($"{projects[0].CostE}  {me.Expertise[E]}");
+                    Console.Error.WriteLine($"{projects[1].CostA}  {me.Expertise[A]}");
+                    Console.Error.WriteLine($"{projects[1].CostB}  {me.Expertise[B]}");
+                    Console.Error.WriteLine($"{projects[1].CostC}  {me.Expertise[C]}");
+                    Console.Error.WriteLine($"{projects[1].CostD}  {me.Expertise[D]}");
+                    Console.Error.WriteLine($"{projects[1].CostE}  {me.Expertise[E]}");
 
-            Console.Error.WriteLine($"{projects[1].CostA}  {me.Expertise[A]}");
-            Console.Error.WriteLine($"{projects[1].CostB}  {me.Expertise[B]}");
-            Console.Error.WriteLine($"{projects[1].CostC}  {me.Expertise[C]}");
-            Console.Error.WriteLine($"{projects[1].CostD}  {me.Expertise[D]}");
-            Console.Error.WriteLine($"{projects[1].CostE}  {me.Expertise[E]}");
-
-            Console.Error.WriteLine($"{projects[2].CostA}  {me.Expertise[A]}");
-            Console.Error.WriteLine($"{projects[2].CostB}  {me.Expertise[B]}");
-            Console.Error.WriteLine($"{projects[2].CostC}  {me.Expertise[C]}");
-            Console.Error.WriteLine($"{projects[2].CostD}  {me.Expertise[D]}");
-            Console.Error.WriteLine($"{projects[2].CostE}  {me.Expertise[E]}");
-
-
-
+                    Console.Error.WriteLine($"{projects[2].CostA}  {me.Expertise[A]}");
+                    Console.Error.WriteLine($"{projects[2].CostB}  {me.Expertise[B]}");
+                    Console.Error.WriteLine($"{projects[2].CostC}  {me.Expertise[C]}");
+                    Console.Error.WriteLine($"{projects[2].CostD}  {me.Expertise[D]}");
+                    Console.Error.WriteLine($"{projects[2].CostE}  {me.Expertise[E]}");
                 }
 
                  if ( me.Storage.Sum() < 10 && mySamples.Any(s => s.CanCostBeCovered(me, opponent))  )
@@ -337,11 +307,11 @@ public class GameData
                     string output = "GOTO SAMPLES";
                     Console.Error.WriteLine("Getting some molecules!");
 
-                    var loaded = mySamples.OrderBy(s => s.TrueCost(me));
+                    var loaded = mySamples.OrderByDescending(s => s.Value(me));
 
                     var storage = me.Storage.ToArray();
                     var expertise = me.Expertise.ToArray();
-                    foreach (var sample in mySamples)
+                    foreach (var sample in loaded)
                     {
                         if (sample.IsCostCovered(storage, expertise))
                         {
@@ -459,10 +429,24 @@ public class GameData
             int costD = Math.Max( Cost[3] - bot.Expertise[D], 0);
             int costE = Math.Max( Cost[4] - bot.Expertise[E], 0);
 
-            int cost =costA + costB + costC + costD + costE;
+            int cost = costA + costB + costC + costD + costE;
 
             Console.Error.WriteLine($"{SampleId} true cost: {cost}");
             return cost;
+        }
+
+        public double Value(Bot bot)
+        {
+            double value = 0.0;
+            var cost = TrueCost(bot);
+            if (cost == 0)
+                value =  Health * 2.0;
+            else
+                value =  Health/cost;
+
+            Console.Error.WriteLine($"{SampleId} value: {value}");
+
+            return value;
         }
 
         public bool IsCostCovered(int[] storage, int[] expertise)
