@@ -480,8 +480,8 @@ public class GameData
             {
             return (
                 Cost[A] <= me.Storage[0]+5 -opponent.Storage[0] + 5 + me.Expertise[A] &&
-                Cost[C] <= me.Storage[1]+5 -opponent.Storage[1] + 5 + me.Expertise[B] &&
-                Cost[B] <= me.Storage[2]+5 -opponent.Storage[2] + 5 + me.Expertise[C] &&
+                Cost[B] <= me.Storage[1]+5 -opponent.Storage[1] + 5 + me.Expertise[B] &&
+                Cost[C] <= me.Storage[2]+5 -opponent.Storage[2] + 5 + me.Expertise[C] &&
                 Cost[D] <= me.Storage[3]+5 -opponent.Storage[3] + 5 + me.Expertise[D] &&
                 Cost[E] <= me.Storage[4]+5 -opponent.Storage[4] + 5 + me.Expertise[E] 
                 );
