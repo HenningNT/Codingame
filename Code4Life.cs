@@ -1,4 +1,4 @@
-// 2nd place silver league
+// 14 place silver league
 
 using System;
 using System.Linq;
@@ -250,21 +250,21 @@ public class GameData
             else if (me.CurrentLocation == "DIAGNOSIS")
             {
                 var undiagnosed = mySamples.Count(s => s.Health == -1);
-                if (mySamples.Count() <3 && gameData.samples.Any(s => s.CanCostBeCovered(me, opponent) && s.CarriedBy == -1))
+                if (mySamples.Count() <3 && gameData.samples.Any(s => s.CanCostBeCovered(me.Expertise, opponent) && s.CarriedBy == -1))
                 {
                     // Get any already diagnosed samples.
-                    var sample = gameData.samples.Where (s =>  s.CarriedBy == -1).OrderByDescending(s => s.Health).First(s =>  s.CanCostBeCovered(me, opponent));
+                    var sample = gameData.samples.Where (s =>  s.CarriedBy == -1).OrderByDescending(s => s.Health).First(s =>  s.CanCostBeCovered(me.Expertise, opponent));
                     Console.WriteLine($"CONNECT {sample.SampleId}");
                 } else if (undiagnosed > 0)
                 {
                     // Diagnose sample
-                    var sample = mySamples.First(s => s.Health == -1 && s.CanCostBeCovered(me, opponent));
+                    var sample = mySamples.First(s => s.Health == -1 && s.CanCostBeCovered(me.Expertise, opponent));
                     Console.WriteLine("CONNECT " + sample.SampleId ); 
                 }
-                else if (mySamples.Count() == 3 && mySamples.Any(s => !s.CanCostBeCovered(me, opponent)))
+                else if (mySamples.Count() == 3 && mySamples.Any(s => !s.CanCostBeCovered(me.Expertise, opponent)))
                 {
                     // Dump samples we can't use (yet)
-                    var sample = mySamples.First(s => !s.CanCostBeCovered(me, opponent));
+                    var sample = mySamples.First(s => !s.CanCostBeCovered(me.Expertise, opponent));
                     Console.Error.WriteLine($"Dumping sample " + sample.SampleId);
                     Console.WriteLine("CONNECT " + sample.SampleId);
                 }
@@ -302,7 +302,7 @@ public class GameData
                     Console.Error.WriteLine($"{projects[2].CostE}  {me.Expertise[E]}");
                 }
 
-                 if ( me.Storage.Sum() < 10 && mySamples.Any(s => s.CanCostBeCovered(me, opponent))  )
+                if ( me.Storage.Sum() < 10 && mySamples.Any(s => s.CanCostBeCovered(me.Expertise, opponent))  )
                 {
                     string output = "GOTO SAMPLES";
                     Console.Error.WriteLine("Getting some molecules!");
@@ -353,7 +353,7 @@ public class GameData
                     {
                         Console.WriteLine("GOTO LABORATORY");
                     }
-                    else if ( output == "GOTO SAMPLES" && mySamples.Count() == 3 && me.Storage.Sum() < 10 && mySamples.Any(s => s.CanCostBeCovered(me, opponent))  )
+                    else if ( output == "GOTO SAMPLES" && mySamples.Count() == 3 && me.Storage.Sum() < 10 && mySamples.Any(s => s.CanCostBeCovered(me.Expertise, opponent))  )
                     {
                         Console.WriteLine("WAIT");
                     }
@@ -365,7 +365,7 @@ public class GameData
                     Console.WriteLine("GOTO LABORATORY");
                 }
 
-                else if (mySamples.Any(s => !s.CanCostBeCovered(me, opponent)))
+                else if (mySamples.Any(s => !s.CanCostBeCovered(me.Expertise, opponent)))
                 {
                     Console.Error.WriteLine($"Can't meet cost");
                     Console.WriteLine("GOTO DIAGNOSIS");
@@ -395,7 +395,7 @@ public class GameData
                     // if (mySamples.Any(s=> s.CanCostBeCovered(me)))
                     //     Console.WriteLine("GOTO MOLECULES");
                     //else 
-                    if (gameData.samples.Any(s => s.CarriedBy == -1 && s.CanCostBeCovered(me, opponent) && mySamples.Count() == 2 ))
+                    if (gameData.samples.Any(s => s.CarriedBy == -1 && s.CanCostBeCovered(me.Expertise, opponent) && mySamples.Count() == 2 ))
                         Console.WriteLine("GOTO DIAGNOSIS");
                     else
                         Console.WriteLine("GOTO SAMPLES");
@@ -468,24 +468,22 @@ public class GameData
             return costCovered;
         }
 
-        public bool CanCostBeCovered(Bot me, Bot opponent)
+        // Checks if there is a theoretical possibility that cost can be covered, regardless of availability.
+        public bool CanCostBeCovered(int[] expertise, Bot opponent)
         {
-            var capacity = 10 + me.Expertise.Sum();
+            var capacity = 10 + expertise.Sum();
             var required = Cost.Sum();
             if (required > capacity)
             {
                 return false;
             }
-            else
-            {
-            return (
-                Cost[A] <= me.Storage[0]+5 -opponent.Storage[0] + 5 + me.Expertise[A] &&
-                Cost[B] <= me.Storage[1]+5 -opponent.Storage[1] + 5 + me.Expertise[B] &&
-                Cost[C] <= me.Storage[2]+5 -opponent.Storage[2] + 5 + me.Expertise[C] &&
-                Cost[D] <= me.Storage[3]+5 -opponent.Storage[3] + 5 + me.Expertise[D] &&
-                Cost[E] <= me.Storage[4]+5 -opponent.Storage[4] + 5 + me.Expertise[E] 
-                );
-            }
+
+            return 
+                Cost[A] <= 5 + expertise[A] &&
+                Cost[B] <= 5 + expertise[B] &&
+                Cost[C] <= 5 + expertise[C] &&
+                Cost[D] <= 5 + expertise[D] &&
+                Cost[E] <= 5 + expertise[E] ;
         }
     }
 }
